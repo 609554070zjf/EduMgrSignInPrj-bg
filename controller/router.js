@@ -225,48 +225,48 @@ var saveStudent = function(req,res){
 };
 
 
-var loadStudents = function(req,res){
-  /*
-    xxx?page=<page_no>&pagesize=<per_page>
-    page_no:页数，表示第几页
-    per_page：每页数据条数
-    如：GET /v1/rtu/<rtu_id>/devices?page=2&pagesize=50
-   */
-  var pageNo = parseInt(req.query.page);
-  var pageSize = parseInt(req.query.pagesize);
-  console.log(pageNo + ":" + pageSize);
-  getCount("stuinfo",function(err,count){
-      // console.log(count);
-      var pageCnt = Math.ceil(count/pageSize);
-      console.log(pageCnt);
-      // 
-      db.query("stuinfo",{},pageSize,pageNo,{"stuno":1},
-      function(err,result){
-        if(err){
-            // console.log(err);
-            res.json({"errormsg":err});
-        }
-        else{
-            // console.log(result);
-            //link：<http://xxx/xxx?page=3& pagesize =50>; rel="next",
-            //< http://xxx/xxx?page=20& pagesize =50>; rel="last"
-            if(pageNo >= pageCnt){
-              pageNo = pageCnt;
-            }
-            else{
-              pageNo = pageNo + 1;
-            }
-            res.setHeader("Access-Control-Expose-Headers","X-Total-Page,link");
-            res.setHeader("X-Total-Page",pageCnt);
-            
-            // res.setHeader("Access-Control-Expose-Headers","link");
-            res.setHeader("link","<http://localhost/v1/loadStudents?page="+(pageNo)+"&pagesize="+ pageSize+">;rel='next',<http://localhost/v1/loadStudents?page="+(pageCnt)+"&pagesize="+ pageSize+">;rel='last'");
-            
-            res.json(result);
-        }
-      });
-  });
-;
+var loadStudents = function(req,res) {
+    /*
+     xxx?page=<page_no>&pagesize=<per_page>
+     page_no:页数，表示第几页
+     per_page：每页数据条数
+     如：GET /v1/rtu/<rtu_id>/devices?page=2&pagesize=50
+     */
+    var pageNo = parseInt(req.query.page);
+    var pageSize = parseInt(req.query.pagesize);
+    console.log(pageNo + ":" + pageSize);
+    getCount("stuinfo", function (err, count) {
+        // console.log(count);
+        var pageCnt = Math.ceil(count / pageSize);
+        console.log(pageCnt);
+        //
+        db.query("stuinfo", {}, pageSize, pageNo, {"stuno": 1},
+            function (err, result) {
+                if (err) {
+                    // console.log(err);
+                    res.json({"errormsg": err});
+                }
+                else {
+                    // console.log(result);
+                    //link：<http://xxx/xxx?page=3& pagesize =50>; rel="next",
+                    //< http://xxx/xxx?page=20& pagesize =50>; rel="last"
+                    if (pageNo >= pageCnt) {
+                        pageNo = pageCnt;
+                    }
+                    else {
+                        pageNo = pageNo + 1;
+                    }
+                    res.setHeader("Access-Control-Expose-Headers", "X-Total-Page,link");
+                    res.setHeader("X-Total-Page", pageCnt);
+
+                    // res.setHeader("Access-Control-Expose-Headers","link");
+                    res.setHeader("link", "<http://localhost/v1/loadStudents?page=" + (pageNo) + "&pagesize=" + pageSize + ">;rel='next',<http://localhost/v1/loadStudents?page=" + (pageCnt) + "&pagesize=" + pageSize + ">;rel='last'");
+
+                    res.json(result);
+                }
+            });
+    });
+};
 
 function getCount(collectionName,callback){
   db.count(collectionName,{},callback);
